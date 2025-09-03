@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TIME MANAGEMENT</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f3f4f6;
+            transition: all 0.3s ease-in-out;
+        }
+        .container {
+            max-width: 900px;
+            margin: auto;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 1.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            padding: 2.5rem;
+            width: 100%;
+            max-width: 600px;
+            margin: 1.5rem;
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .task-list-item {
+            background-color: #f9fafb;
+            border-left: 5px solid #6366f1;
+            padding: 1rem;
+            margin-bottom: 0.75rem;
+            border-radius: 0.75rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .task-list-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .delete-btn {
+            background-color: #ef4444;
+            color: white;
+            padding: 0.5rem 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            font-weight: 500;
+            transition: background-color 0.2s ease-in-out;
+        }
+        .delete-btn:hover {
+            background-color: #dc2626;
+        }
+        #snakeCanvas {
+            border: 2px solid #3b82f6;
+            background-color: #d1d5db;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        .text-overlay {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #4b5563;
+            font-size: 2rem;
+            text-align: center;
+            pointer-events: none;
+            text-shadow: 1px 1px 2px white;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 flex items-center justify-center min-h-screen">
+
+    <div class="container p-4">
+
+        <!-- Header -->
+        <header class="w-full text-center mb-8">
+            <h1 class="text-4xl sm:text-5xl font-extrabold text-gray-900 mb-2">TIME MANAGEMENT</h1>
+            <p class="text-md text-gray-600 font-medium">Owner: Danyal Khattak</p>
+        </header>
+
+        <!-- Navigation Buttons -->
+        <div class="flex space-x-4 mb-8">
+            <button id="showTasksBtn" class="px-6 py-3 rounded-full text-lg font-semibold bg-indigo-600 text-white shadow-lg transition transform hover:scale-105 active:scale-95">My Tasks</button>
+            <button id="showGamesBtn" class="px-6 py-3 rounded-full text-lg font-semibold bg-emerald-500 text-white shadow-lg transition transform hover:scale-105 active:scale-95">Play Games</button>
+        </div>
+
+        <!-- Task Manager View -->
+        <div id="taskView" class="card">
+            <h2 class="text-2xl font-bold text-gray-800 mb-6 text-center">Your To-Do List</h2>
+            <div class="flex flex-col sm:flex-row sm:space-x-4 mb-4">
+                <div class="flex-1 mb-4 sm:mb-0">
+                    <label for="taskSelect" class="block text-sm font-medium text-gray-700 mb-1">Select a Task</label>
+                    <select id="taskSelect" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        <option value="Work">Work</option>
+                        <option value="Study">Study</option>
+                        <option value="Exercise">Exercise</option>
+                        <option value="Meeting">Meeting</option>
+                        <option value="Shopping">Shopping</option>
+                        <option value="Custom">Custom Task</option>
+                    </select>
+                </div>
+                <div class="flex-1" id="customTaskInputContainer">
+                    <label for="customTaskInput" class="block text-sm font-medium text-gray-700 mb-1">Or Enter a Custom Task</label>
+                    <input type="text" id="customTaskInput" placeholder="Enter your task" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row sm:space-x-4 mb-6">
+                <div class="flex-1 mb-4 sm:mb-0">
+                    <label for="taskDate" class="block text-sm font-medium text-gray-700 mb-1">Date</label>
+                    <input type="date" id="taskDate" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+                <div class="flex-1">
+                    <label for="taskTime" class="block text-sm font-medium text-gray-700 mb-1">Time</label>
+                    <input type="time" id="taskTime" class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                </div>
+            </div>
+
+            <button id="addTaskBtn" class="w-full bg-indigo-600 text-white py-3 rounded-lg font-bold text-lg shadow-md hover:bg-indigo-700 transition transform hover:scale-105 active:scale-95">Save Task</button>
+
+            <div id="taskList" class="mt-8">
+                <!-- Task items will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Games View -->
+        <div id="gamesView" class="card hidden">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4 text-center">Offline Games</h2>
+            <div class="flex flex-col items-center">
+                <canvas id="snakeCanvas" width="300" height="300" class="mb-4"></canvas>
+                <div class="text-overlay hidden" id="game-message">Press Space to Start</div>
+                <div class="flex space-x-4">
+                    <button id="startGameBtn" class="px-6 py-2 rounded-full font-semibold bg-blue-500 text-white shadow hover:bg-blue-600">Start Snake</button>
+                    <button id="pauseGameBtn" class="px-6 py-2 rounded-full font-semibold bg-gray-500 text-white shadow hover:bg-gray-600">Pause</button>
+                </div>
+            </div>
+            <div class="mt-4 text-center">
+                <p class="text-sm text-gray-600">Use arrow keys to control the snake.</p>
+            </div>
+        </div>
+
+        <!-- Custom Alert Modal -->
+        <div id="customAlert" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full flex justify-center items-center">
+            <div class="bg-white p-6 rounded-xl shadow-xl border-t-4 border-indigo-500 transform transition-all scale-100 ease-in-out">
+                <h3 class="text-xl font-bold mb-4 text-gray-800">Notification</h3>
+                <p id="customAlertMessage" class="text-gray-700 mb-4"></p>
+                <button id="customAlertCloseBtn" class="w-full bg-indigo-600 text-white py-2 rounded-lg font-bold hover:bg-indigo-700">OK</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const taskView = document.getElementById('taskView');
+            const gamesView = document.getElementById('gamesView');
+            const showTasksBtn = document.getElementById('showTasksBtn');
+            const showGamesBtn = document.getElementById('showGamesBtn');
+            const taskSelect = document.getElementById('taskSelect');
+            const customTaskInput = document.getElementById('customTaskInput');
+            const customTaskInputContainer = document.getElementById('customTaskInputContainer');
+            const taskDateInput = document.getElementById('taskDate');
+            const taskTimeInput = document.getElementById('taskTime');
+            const addTaskBtn = document.getElementById('addTaskBtn');
+            const taskList = document.getElementById('taskList');
+
+            // Custom Alert elements
+            const customAlert = document.getElementById('customAlert');
+            const customAlertMessage = document.getElementById('customAlertMessage');
+            const customAlertCloseBtn = document.getElementById('customAlertCloseBtn');
+
+            // Initial view setup
+            const showView = (view) => {
+                taskView.classList.add('hidden');
+                gamesView.classList.add('hidden');
+                if (view === 'tasks') {
+                    taskView.classList.remove('hidden');
+                } else {
+                    gamesView.classList.remove('hidden');
+                }
+            };
+            
+            showTasksBtn.addEventListener('click', () => showView('tasks'));
+            showGamesBtn.addEventListener('click', () => showView('games'));
+
+            // Show/hide custom task input based on selection
+            taskSelect.addEventListener('change', () => {
+                if (taskSelect.value === 'Custom') {
+                    customTaskInputContainer.classList.remove('hidden');
+                } else {
+                    customTaskInputContainer.classList.add('hidden');
+                }
+            });
+
+            // Set current date and time as defaults
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = (now.getMonth() + 1).toString().padStart(2, '0');
+            const day = now.getDate().toString().padStart(2, '0');
+            taskDateInput.value = `${year}-${month}-${day}`;
+            taskTimeInput.value = `${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}`;
+            
+            // Notification permission and scheduling
+            const requestNotificationPermission = () => {
+                if ("Notification" in window) {
+                    Notification.requestPermission();
+                }
+            };
+            requestNotificationPermission();
+
+            const showCustomAlert = (message) => {
+                customAlertMessage.textContent = message;
+                customAlert.classList.remove('hidden');
+            };
+
+            customAlertCloseBtn.addEventListener('click', () => {
+                customAlert.classList.add('hidden');
+            });
+
+            const scheduleNotification = (task) => {
+                const now = new Date();
+                const taskDateTime = new Date(task.date + 'T' + task.time);
+                const timeDiff = taskDateTime.getTime() - now.getTime();
+
+                if (timeDiff > 0 && "Notification" in window && Notification.permission === "granted") {
+                    setTimeout(() => {
+                        new Notification("Time to do your task!", {
+                            body: `It's time for: ${task.name}`,
+                            icon: 'https://placehold.co/64x64/000000/FFFFFF?text=TM'
+                        });
+                    }, timeDiff);
+                }
+            };
+
+            // Task management logic
+            const saveTask = () => {
+                let taskName = taskSelect.value;
+                if (taskName === 'Custom') {
+                    taskName = customTaskInput.value.trim();
+                }
+                const taskDate = taskDateInput.value;
+                const taskTime = taskTimeInput.value;
+
+                if (!taskName || !taskDate || !taskTime) {
+                    showCustomAlert("Please fill in all task details.");
+                    return;
+                }
+
+                const newTask = {
+                    id: Date.now(),
+                    name: taskName,
+                    date: taskDate,
+                    time: taskTime
+                };
+
+                const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+                tasks.push(newTask);
+                localStorage.setItem('tasks', JSON.stringify(tasks));
+                
+                showCustomAlert("Task saved successfully!");
+                renderTasks();
+                scheduleNotification(newTask);
+
+                // Clear inputs for next entry
+                customTaskInput.value = '';
+                taskSelect.value = 'Work';
+                customTaskInputContainer.classList.add('hidden');
+            };
+
+            addTaskBtn.addEventListener('click', saveTask);
+
+            const renderTasks = () => {
+                taskList.innerHTML = '';
+                const tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+                if (tasks.length === 0) {
+                    taskList.innerHTML = '<p class="text-center text-gray-500">You have no tasks saved. Add a new one above!</p>';
+                } else {
+                    tasks.sort((a, b) => new Date(a.date + 'T' + a.time) - new Date(b.date + 'T' + b.time));
+                    tasks.forEach(task => {
+                        const taskElement = document.createElement('div');
+                        taskElement.classList.add('task-list-item');
+                        taskElement.innerHTML = `
+                            <div>
+                                <h3 class="font-semibold text-lg text-gray-800">${task.name}</h3>
+                                <p class="text-sm text-gray-600">${task.date} at ${task.time}</p>
+                            </div>
+                            <button data-id="${task.id}" class="delete-btn">Delete</button>
+                        `;
+                        taskList.appendChild(taskElement);
+                    });
+
+                    document.querySelectorAll('.delete-btn').forEach(button => {
+                        button.addEventListener('click', (e) => {
+                            const id = e.target.dataset.id;
+                            let currentTasks = JSON.parse(localStorage.getItem('tasks')) || [];
+                            currentTasks = currentTasks.filter(task => task.id !== parseInt(id));
+                            localStorage.setItem('tasks', JSON.stringify(currentTasks));
+                            renderTasks();
+                        });
+                    });
+                }
+            };
+
+            // Initial render
+            renderTasks();
+            
+            // Snake Game Logic
+            const canvas = document.getElementById('snakeCanvas');
+            const ctx = canvas.getContext('2d');
+            const startGameBtn = document.getElementById('startGameBtn');
+            const pauseGameBtn = document.getElementById('pauseGameBtn');
+            const gameMessage = document.getElementById('game-message');
+
+            const box = 20;
+            let snake = [];
+            snake[0] = { x: 9 * box, y: 10 * box };
+            let food = {};
+            let score = 0;
+            let d;
+            let game;
+            let isPaused = false;
+
+            const getRandomPosition = () => {
+                return {
+                    x: Math.floor(Math.random() * 15 + 1) * box,
+                    y: Math.floor(Math.random() * 15 + 1) * box
+                };
+            };
+            food = getRandomPosition();
+
+            const draw = () => {
+                ctx.fillStyle = '#d1d5db';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                for (let i = 0; i < snake.length; i++) {
+                    ctx.fillStyle = (i === 0) ? '#10b981' : '#34d399';
+                    ctx.fillRect(snake[i].x, snake[i].y, box, box);
+
+                    ctx.strokeStyle = '#065f46';
+                    ctx.strokeRect(snake[i].x, snake[i].y, box, box);
+                }
+
+                ctx.fillStyle = '#ef4444';
+                ctx.fillRect(food.x, food.y, box, box);
+
+                let snakeX = snake[0].x;
+                let snakeY = snake[0].y;
+
+                if (d === "LEFT") snakeX -= box;
+                if (d === "UP") snakeY -= box;
+                if (d === "RIGHT") snakeX += box;
+                if (d === "DOWN") snakeY += box;
+
+                if (snakeX === food.x && snakeY === food.y) {
+                    score++;
+                    food = getRandomPosition();
+                } else {
+                    snake.pop();
+                }
+
+                let newHead = { x: snakeX, y: snakeY };
+
+                if (snakeX < 0 || snakeY < 0 || snakeX > 19 * box || snakeY > 19 * box || collision(newHead, snake)) {
+                    clearInterval(game);
+                    showCustomAlert(`Game Over! Your score: ${score}`);
+                    gameMessage.textContent = `Game Over! Score: ${score}. Press Space to Play Again.`;
+                    gameMessage.classList.remove('hidden');
+                }
+
+                snake.unshift(newHead);
+            };
+
+            const direction = (event) => {
+                let key = event.keyCode;
+                if (key === 37 && d !== "RIGHT") d = "LEFT";
+                else if (key === 38 && d !== "DOWN") d = "UP";
+                else if (key === 39 && d !== "LEFT") d = "RIGHT";
+                else if (key === 40 && d !== "UP") d = "DOWN";
+                else if (key === 32) {
+                    if (!game) {
+                        startGame();
+                    }
+                }
+            };
+            document.addEventListener('keydown', direction);
+
+            const collision = (head, array) => {
+                for (let i = 0; i < array.length; i++) {
+                    if (head.x === array[i].x && head.y === array[i].y) {
+                        return true;
+                    }
+                }
+                return false;
+            };
+
+            const startGame = () => {
+                if (game) clearInterval(game);
+                snake = [];
+                snake[0] = { x: 9 * box, y: 10 * box };
+                food = getRandomPosition();
+                score = 0;
+                d = undefined;
+                game = setInterval(draw, 100);
+                gameMessage.classList.add('hidden');
+                isPaused = false;
+                pauseGameBtn.textContent = 'Pause';
+            };
+
+            const togglePause = () => {
+                if (isPaused) {
+                    game = setInterval(draw, 100);
+                    isPaused = false;
+                    pauseGameBtn.textContent = 'Pause';
+                    gameMessage.classList.add('hidden');
+                } else {
+                    clearInterval(game);
+                    isPaused = true;
+                    pauseGameBtn.textContent = 'Resume';
+                    gameMessage.textContent = 'Paused';
+                    gameMessage.classList.remove('hidden');
+                }
+            };
+
+            startGameBtn.addEventListener('click', startGame);
+            pauseGameBtn.addEventListener('click', togglePause);
+
+            // Initial game message
+            gameMessage.classList.remove('hidden');
+        });
+    </script>
+</body>
+</html>
